@@ -46,7 +46,6 @@ jobs:
         run: |
           cd chromium/src
           # 使用清华镜像加速下载
-          export GIT_CONFIG_PARAMETERS="url.https://mirrors.tuna.tsinghua.edu.cn/git/chromium/.insteadOf=https://chromium.googlesource.com/"
           gclient sync --no-history --with_branch_heads
 
       - name: Configure build
