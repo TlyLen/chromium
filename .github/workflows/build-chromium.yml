@@ -45,8 +45,23 @@ jobs:
       - name: Sync dependencies
         run: |
           cd chromium/src
-          # 使用清华镜像加速下载
-          gclient sync --no-history --with_branch_heads
+          
+          # 配置 gclient 项目（指定 Chromium 源码仓库）
+          gclient config --spec='solutions = [
+            {
+              "name": "src",
+              "url": "https://chromium.googlesource.com/chromium/src.git",
+              "custom_deps": {},
+              "custom_vars": {},
+            },
+          ]'
+          
+          # 同步依赖（保留之前的重试逻辑，提高稳定性）
+          for i in {1..3}; do
+            gclient sync --no-history --with_branch_heads && break
+            echo "Sync attempt $i failed, retrying..."
+            sleep 10
+          done || { echo "Failed after 3 attempts"; exit 1; }
 
       - name: Configure build
         run: |
